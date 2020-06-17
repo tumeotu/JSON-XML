@@ -12,6 +12,7 @@ public class SAX_Parser {
             SAXParser saxParser = factory.newSAXParser();
             UserHandler userhandler = new UserHandler();
             saxParser.parse(inputFile, userhandler);
+            System.out.println(userhandler.studentList.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

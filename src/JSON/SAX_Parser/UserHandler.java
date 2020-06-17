@@ -4,22 +4,26 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.*;
+
 public class UserHandler extends DefaultHandler {
+
+    public StringBuilder content = null;
+    public Student student = null;
+    public List<Student> studentList = null;
 
     boolean bName = false;
     boolean bCode = false;
     boolean bAge = false;
 
     @Override
-    public void startElement() throws SAXException {
-        System.out.println("abc");
-    }
-
-    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equalsIgnoreCase("student")) {
             String ID = attributes.getValue("id");
-            System.out.println("ID : " + ID);
+            student= new Student();
+            student.ID = ID;
+            if (studentList == null)
+                studentList = new ArrayList<>();
         } else if (qName.equalsIgnoreCase("name")) {
             bName = true;
         } else if (qName.equalsIgnoreCase("code")) {
@@ -27,24 +31,28 @@ public class UserHandler extends DefaultHandler {
         } else if (qName.equalsIgnoreCase("age")) {
             bAge = true;
         }
+        content = new StringBuilder();
     }
+
     @Override
-    public void endElement(String uri,String localName, String qName) throws SAXException {
-        if (qName.equalsIgnoreCase("student")) {
-            System.out.println("-----------------");
-        }
-    }
-    @Override
-    public void characters(char ch[], int start, int length) throws SAXException {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
         if (bName) {
-            System.out.println("Name: " + new String(ch, start, length));
+            student.Name = content.toString();
             bName = false;
         } else if (bCode) {
-            System.out.println("Code: " + new String(ch, start, length));
+            student.Code = content.toString();
             bCode = false;
-        } else if (bAge) {
-            System.out.println("Age: " + new String(ch, start, length));
+        }
+        else if (bAge) {
+            student.Age = Integer.parseInt(content.toString());
             bAge = false;
         }
+        if (qName.equalsIgnoreCase("student")) {
+                studentList.add(student);
+            }
+    }
+    @Override
+    public void characters ( char ch[], int start, int length) throws SAXException {
+        content.append(new String(ch,start,length));
     }
 }
